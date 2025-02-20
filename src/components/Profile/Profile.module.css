@@ -1,9 +1,10 @@
 .wrapper
 {
-    background-color: beige;
+    background-color: rgb(241, 241, 241);
     border: 2px solid black;
     border-radius: 4px;
     width: 400px;
+    margin-bottom: 32px;
 }
 
 .avatar
@@ -51,11 +52,13 @@
 .stat
 {
     display: block;
+    text-align: center;
     margin-bottom: 8px;
 }
 
 .statvalue
 {
     display: block;
+    text-align: center;
     font-weight: bold;
 }

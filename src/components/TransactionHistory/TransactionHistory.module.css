@@ -1,0 +1,26 @@
+.table
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.table td
+{
+    padding: 8px 20px;
+}
+
+.head
+{
+    background-color: rgb(80, 80, 80);
+}
+
+.head td
+{
+    color: white;
+    font-weight: bold;
+}
+
+.body tr:nth-child(even)
+{
+    background-color: rgb(221, 221, 221);
+}
