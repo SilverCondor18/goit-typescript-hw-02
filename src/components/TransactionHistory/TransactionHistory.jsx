@@ -2,7 +2,6 @@ import css from './TransactionHistory.module.css';
 
 export default function TransactionHistory({ items })
 {
-    console.log(items);
     return (
         <table border="1" className={css.table}>
             <thead className={css.head}>
