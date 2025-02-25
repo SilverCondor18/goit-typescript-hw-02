@@ -4,7 +4,8 @@ import Feedback from '../Feedback/Feedback'
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [feedback, setFeedback] = useState({
+  const feedbackState = localStorage.getItem("feedback-state");
+  const [feedback, setFeedback] = useState(feedbackState !== null ? JSON.parse(feedbackState) : {
     good: 0,
     bad: 0,
     neutral: 0
@@ -12,12 +13,7 @@ function App() {
   useEffect(() => {
     localStorage.setItem("feedback-state", JSON.stringify(feedback))
   }, [feedback]);
-  useEffect(() => {
-    const feedbackState = localStorage.getItem("feedback-state");
-    if (feedbackState !== null) {
-      setFeedback(JSON.parse(feedbackState));
-    }
-  }, []);
+
   const updateFeedback = feedbackType => {
     const currentState = {
       ...feedback
