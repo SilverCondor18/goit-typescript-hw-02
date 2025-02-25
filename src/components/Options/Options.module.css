@@ -1,0 +1,11 @@
+.options
+{
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.button
+{
+    padding: 4px 8px;
+}

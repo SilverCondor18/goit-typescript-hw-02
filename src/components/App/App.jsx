@@ -1,17 +1,43 @@
-import Profile from '../Profile/Profile';
-import userData from '../../userdata.json';
-import friends from '../../friends.json';
-import FriendList from '../FriendList/FriendList';
-import transactions from '../../transactions.json';
-import TransactionHistory from '../TransactionHistory/TransactionHistory';
+import Description from '../Description/Description'
+import Options from '../Options/Options'
+import Feedback from '../Feedback/Feedback'
+import { useState, useEffect } from 'react';
 
 function App() {
-
+  const [feedback, setFeedback] = useState({
+    good: 0,
+    bad: 0,
+    neutral: 0
+  });
+  useEffect(() => {
+    localStorage.setItem("feedback-state", JSON.stringify(feedback))
+  }, [feedback]);
+  useEffect(() => {
+    const feedbackState = localStorage.getItem("feedback-state");
+    if (feedbackState !== null) {
+      setFeedback(JSON.parse(feedbackState));
+    }
+  }, []);
+  const updateFeedback = feedbackType => {
+    const currentState = {
+      ...feedback
+    };
+    currentState[feedbackType] = currentState[feedbackType] + 1;
+    setFeedback(currentState);
+  };
+  const resetFeedback = () => {
+    setFeedback({
+      good: 0,
+      bad: 0,
+      neutral: 0
+    });
+  };
+  const totalFeedback = feedback.good + feedback.bad + feedback.neutral;
   return (
     <>
-      <Profile profile={userData} />
-      <FriendList friends={friends} />
-      <TransactionHistory items={transactions} />
+      <Description title="Sip Happens Cafe" content="Please leave your feedback about our service by selecting one of the options below." />
+      <Options feedbackHandler={updateFeedback} resetHandler={resetFeedback} />
+      {totalFeedback > 0 && <Feedback feedback={feedback} totalFeedback={totalFeedback} />}
     </>
   )
 }

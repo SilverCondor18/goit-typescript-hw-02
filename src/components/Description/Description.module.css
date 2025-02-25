@@ -1,0 +1,15 @@
+.description
+{
+    margin-bottom: 16px;
+}
+
+.title
+{
+    margin-bottom: 32px;
+}
+
+.content
+{
+    text-wrap: wrap;
+    width: 50%;
+}
