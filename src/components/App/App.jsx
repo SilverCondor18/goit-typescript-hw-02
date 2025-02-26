@@ -1,6 +1,7 @@
 import Description from '../Description/Description'
 import Options from '../Options/Options'
 import Feedback from '../Feedback/Feedback'
+import Notification from '../Notification/Notification'
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -32,8 +33,8 @@ function App() {
   return (
     <>
       <Description title="Sip Happens Cafe" content="Please leave your feedback about our service by selecting one of the options below." />
-      <Options feedbackHandler={updateFeedback} resetHandler={resetFeedback} />
-      {totalFeedback > 0 && <Feedback feedback={feedback} totalFeedback={totalFeedback} />}
+      <Options feedbackHandler={updateFeedback} resetHandler={resetFeedback} totalFeedback={totalFeedback} />
+      {totalFeedback > 0 ? <Feedback feedback={feedback} totalFeedback={totalFeedback} positiveFeedback={Math.round((feedback.good / totalFeedback) * 100)} /> : <Notification message="No feedback yet" />}
     </>
   )
 }
