@@ -1,0 +1,12 @@
+.description
+{
+    display: flex;
+    gap: 8px;
+}
+
+.wrapper
+{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
