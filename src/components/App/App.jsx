@@ -1,49 +1,104 @@
-import ContactForm from '../ContactForm/ContactForm'
-import SearchBox from '../SearchBox/SearchBox'
-import ContactList from '../ContactList/ContactList';
 import css from './App.module.css'
+import SearchBar from '../SearchBar/SearchBar'
+import ImageGallery from '../ImageGallery/ImageGallery'
+import {searchImages} from '../../unsplash-api'
 import { nanoid } from 'nanoid';
+import ClipLoader from 'react-spinners/ClipLoader'
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn'
+import Modal from 'react-modal'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
+import ImageModal from '../ImageModal/ImageModal';
+
+const loaderCss = {
+  display: "block",
+  margin: "0 auto"
+};
 
 function App() {
-  const [contacts, setContacts] = useState(() => {
-    const savedContacts = localStorage.getItem("contacts");
-    return savedContacts !== null ? JSON.parse(savedContacts) : [];
-  });
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState('');
+  const [loaderVisible, setLoaderVisible] = useState(false);
+  const [loadMoreVisible, setLoadMoreVisible] = useState(false);
+  const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalInfo, setModalInfo] = useState({largeImage: "", description: ""});
 
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-  }, [contacts]);
-
-  const addContact = contact => {
-    const newContact = {
-      ...contact,
-      id: nanoid()
-    };
-    setContacts(prevContacts => {
-      return [...prevContacts, newContact];
-    });
-  };
-
-  const deleteContact = id => {
-    setContacts(prevContacts => prevContacts.filter(c => c.id !== id));
-  };
-
-  const filterContacts = filterText => {
-    setFilter(filterText);
+  const loadMore = async () => {
+    setLoaderVisible(true);
+    setLoadMoreVisible(false);
+    try {
+      const results = await searchImages(query, page);
+      setImages(prevImages => [...prevImages, ...results.results]);
+      setLoadMoreVisible(page < results.total_pages);
+    }
+    catch (error)
+    {
+      console.log(error);
+    }
+    finally
+    {
+      setLoaderVisible(false);
+    }
   }
 
-  const filteredContacts = contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+  useEffect(() => {
+    if (page == 1) {
+      return;
+    }
+    loadMore();
+  }, [page]);
+
+  const handleSearch = async query => {
+    setImages([]);
+    setPage(1);
+    setQuery(query);
+    setLoaderVisible(true);
+    setLoadMoreVisible(false);
+    try {
+      const results = await searchImages(query, page);
+      setImages(results.results);
+      setLoadMoreVisible(page < results.total_pages);
+    }
+    catch (error)
+    {
+      console.log(error)
+    }
+    finally
+    {
+      setLoaderVisible(false);
+    }
+  };
+
+  const loadMoreHandler = () => {
+    setPage(prevPage => prevPage + 1);
+  }
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  }
+
+  const handleOpenModal = (largeImage, description) => {
+    setModalInfo({
+      largeImage: largeImage,
+      description: description
+    });
+    openModal();
+  }
 
   return (
     <>
-      <h1 className={css.header}>Phonebook</h1>
-      <ContactForm addContact={addContact} />
-      <SearchBox onFilter={filterContacts} />
-      <ContactList contacts={filteredContacts} deleteContact={deleteContact} />
+      <SearchBar onSearch={handleSearch} />
+      {images.length > 0 && <ImageGallery images={images} openModal={handleOpenModal} />}
+      <ClipLoader color="blue" size="150px" loading={loaderVisible} cssOverride={loaderCss} />
+      {loadMoreVisible && <LoadMoreBtn currentPage={page} onClick={loadMoreHandler} />}
+      <Modal isOpen={isModalOpen} onRequestClose={closeModal} >
+        <ImageModal largeImage={modalInfo.largeImage} description={modalInfo.description} />
+      </Modal>
     </>
   )
 }
