@@ -1,8 +1,8 @@
 import css from './LoadMoreBtn.module.css'
 
-export default function LoadMoreBtn({ onClick, currentPage })
+export default function LoadMoreBtn({ onClick })
 {
     return (
-        <button className={css.more} type="button" onClick={onClick}>Load more {currentPage}</button>
+        <button className={css.more} type="button" onClick={onClick}>Load more</button>
     );
 }
