@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import css from './SearchBar.module.css'
 import { FaSearch } from "react-icons/fa"
 
@@ -5,6 +6,12 @@ export default function SearchBar({ onSearch })
 {
     const onFormSubmit = event => {
         event.preventDefault();
+        const pureQuery = event.target.elements.query.value.trim();
+        if (pureQuery == '')
+        {
+            toast.error("Search field cannot be empty!");
+            return;
+        }
         onSearch(event.target.elements.query.value);
     }
     return (

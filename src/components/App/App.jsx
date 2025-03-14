@@ -8,6 +8,7 @@ import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn'
 import { useState, useEffect } from 'react';
 import ImageModal from '../ImageModal/ImageModal';
 import ErrorMessage from '../ErrorMessage/ErrorMessage'
+import { Toaster } from 'react-hot-toast'
 
 const loaderCss = {
   display: "block",
@@ -33,7 +34,7 @@ function App() {
       setImages(prevImages => [...prevImages, ...results.results]);
       setLoadMoreVisible(page < results.total_pages);
     }
-    catch
+    catch(error)
     {
       setErrorVisible(true);
     }
@@ -44,25 +45,32 @@ function App() {
   }
 
   useEffect(() => {
+    if (query == '')
+    {
+      return;
+    }
+    setImages([]);
+    setPage(1);
+    querySearch(query);
+  }, [query]);
+
+  useEffect(() => {
     if (page == 1) {
       return;
     }
     loadMore();
   }, [page]);
 
-  const handleSearch = async query => {
-    setImages([]);
-    setPage(1);
-    setQuery(query);
+  const querySearch = async query => {
     setLoaderVisible(true);
     setLoadMoreVisible(false);
     setErrorVisible(false);
     try {
-      const results = await searchImages(query, page);
+      const results = await searchImages(query, 1);
       setImages(results.results);
       setLoadMoreVisible(page < results.total_pages);
     }
-    catch
+    catch(error)
     {
       setErrorVisible(true);
     }
@@ -71,6 +79,10 @@ function App() {
       setLoaderVisible(false);
     }
   };
+
+  const handleSearch = query => {
+    setQuery(query);
+  }
 
   const loadMoreHandler = () => {
     setPage(prevPage => prevPage + 1);
@@ -94,6 +106,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       <SearchBar onSearch={handleSearch} />
       {images.length > 0 && <ImageGallery images={images} openModal={handleOpenModal} />}
       <ClipLoader color="blue" size="150px" loading={loaderVisible} cssOverride={loaderCss} />
