@@ -16,7 +16,14 @@ const customStyles = {
     }
 };
 
-export default function ImageModal({ largeImage, description, isOpen, closeModal })
+type Props = {
+    largeImage: string;
+    description: string;
+    isOpen: boolean;
+    closeModal: (event: React.MouseEvent) => void;
+}
+
+export default function ImageModal({ largeImage, description, isOpen, closeModal }: Props)
 {
     return (
         <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles} ariaHideApp={false}>

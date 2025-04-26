@@ -1,7 +1,7 @@
 
 import SearchBar from '../SearchBar/SearchBar'
 import ImageGallery from '../ImageGallery/ImageGallery'
-import {searchImages} from '../../unsplash-api'
+import {searchImages, GalleryImage} from '../../unsplash-api'
 import ClipLoader from 'react-spinners/ClipLoader'
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn'
 
@@ -15,15 +15,22 @@ const loaderCss = {
   margin: "0 auto"
 };
 
+type ModalInfo = {
+  largeImage: string;
+  description: string;
+};
+
+type SearchOperation = (query: string) => void;
+
 function App() {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState('');
-  const [loaderVisible, setLoaderVisible] = useState(false);
-  const [loadMoreVisible, setLoadMoreVisible] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalInfo, setModalInfo] = useState({ largeImage: "", description: "" });
-  const [errorVisible, setErrorVisible] = useState(false);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const [loaderVisible, setLoaderVisible] = useState<boolean>(false);
+  const [loadMoreVisible, setLoadMoreVisible] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalInfo, setModalInfo] = useState<ModalInfo>({ largeImage: "", description: "" });
+  const [errorVisible, setErrorVisible] = useState<boolean>(false);
 
   const loadMore = async () => {
     setLoaderVisible(true);
@@ -61,7 +68,7 @@ function App() {
     loadMore();
   }, [page]);
 
-  const querySearch = async query => {
+  const querySearch: SearchOperation = async query => {
     setLoaderVisible(true);
     setLoadMoreVisible(false);
     setErrorVisible(false);
@@ -80,7 +87,7 @@ function App() {
     }
   };
 
-  const handleSearch = query => {
+  const handleSearch: SearchOperation = query => {
     setQuery(query);
   }
 
@@ -96,7 +103,7 @@ function App() {
     setIsModalOpen(false);
   }
 
-  const handleOpenModal = (largeImage, description) => {
+  const handleOpenModal: (largeImage: string, description: string) => void = (largeImage, description) => {
     setModalInfo({
       largeImage: largeImage,
       description: description
